@@ -7,7 +7,7 @@ import (
 
 const (
 	LevelDebug = "debug"
-	LevelInfo = "info"
+	LevelInfo  = "info"
 )
 
 func SetupLogger(logLevel string) *slog.Logger {
