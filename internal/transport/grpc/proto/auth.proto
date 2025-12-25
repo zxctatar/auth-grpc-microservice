@@ -22,6 +22,15 @@ message RegistrationResponse {
     uint32 user_id = 1;
 }
 
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+}
+
 message ValidateTokenRequest {
     string token = 1;
 }
