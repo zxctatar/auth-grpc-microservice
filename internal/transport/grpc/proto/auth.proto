@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "../pb;authv1";
+
+service AuthService {
+    rpc Registration(RegistrationRequest) returns (RegistrationResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message RegistrationRequest {
+    string first_name = 1;
+    string middle_name = 2;
+    string last_name = 3;
+    string password = 4;
+    string email = 5;
+}
+
+message RegistrationResponse {
+    uint32 user_id = 1;
+}
+
+message ValidateTokenRequest {
+    string token = 1;
+}
+
+message ValidateTokenResponse {
+    uint32 user_id = 1;
+    bool valid = 2;
+}
