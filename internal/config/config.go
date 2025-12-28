@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,8 +15,9 @@ type Config struct {
 }
 
 type GRPCConfig struct {
-	Port         int    `yaml:"port"`
-	JWTSecretKey string `yaml:"jwtSecretKey"`
+	Port         int           `yaml:"port"`
+	TimeOut      time.Duration `yaml:"timeout"`
+	JWTSecretKey string        `yaml:"jwtSecretKey"`
 }
 
 type LoggerConfig struct {

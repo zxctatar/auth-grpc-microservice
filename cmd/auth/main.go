@@ -46,7 +46,7 @@ func main() {
 
 	regUC := registration.NewRegistrationUC(log, postg)
 
-	authHandl := handler.NewAuthHandler(log, regUC)
+	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC)
 
 	server := grpcserv.NewServer(log, authHandl)
 

@@ -5,19 +5,22 @@ import (
 	"auth/internal/usecase/registration"
 	"context"
 	"log/slog"
+	"time"
 )
 
 type AuthHandler struct {
 	authv1.UnimplementedAuthServiceServer
 
-	log   *slog.Logger
-	regUC *registration.RegistrationUC
+	log     *slog.Logger
+	timeOut *time.Duration
+	regUC   *registration.RegistrationUC
 }
 
-func NewAuthHandler(log *slog.Logger, regUC *registration.RegistrationUC) *AuthHandler {
+func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC *registration.RegistrationUC) *AuthHandler {
 	return &AuthHandler{
-		log:   log,
-		regUC: regUC,
+		log:     log,
+		timeOut: timeOut,
+		regUC:   regUC,
 	}
 }
 
@@ -25,6 +28,9 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	const op = "handler.Registration"
 
 	ah.log.Info("new registration request", slog.String("op", op))
+
+	ctx, cancel := context.WithTimeout(ctx, *ah.timeOut)
+	defer cancel()
 
 	regInput, err := registration.NewRegInput(
 		rr.FirstName,
