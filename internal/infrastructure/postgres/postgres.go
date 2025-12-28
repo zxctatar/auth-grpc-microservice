@@ -19,7 +19,7 @@ func NewPostgres(log *slog.Logger, db *sql.DB) *Postgres {
 	}
 }
 
-func (p *Postgres) Save(ctx context.Context, user *userdomain.UserDomain) (int, error) {
+func (p *Postgres) Save(ctx context.Context, user *userdomain.UserDomain) (uint32, error) {
 	panic("not implemented")
 }
 
