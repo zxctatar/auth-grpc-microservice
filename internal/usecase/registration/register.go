@@ -19,6 +19,6 @@ func NewRegistrationUC(log *slog.Logger, repo repository.StorageRepo) *Registrat
 	}
 }
 
-func RegUser(ctx context.Context, ri *RegInput) (int, error) {
+func (ru *RegistrationUC) RegUser(ctx context.Context, ri *RegInput) (uint32, error) {
 	panic("not implemented")
 }
