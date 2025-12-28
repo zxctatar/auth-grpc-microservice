@@ -53,7 +53,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	}
 
 	return &authv1.RegistrationResponse{
-		UserId: uint32(id),
+		UserId: id,
 	}, nil
 }
 
