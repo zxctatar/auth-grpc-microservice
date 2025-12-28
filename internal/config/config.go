@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	GRPC   GRPCConfig   `yaml:"grpc"`
-	Logger LoggerConfig `yaml:"logger"`
+	GRPC     GRPCConfig     `yaml:"grpc"`
+	Logger   LoggerConfig   `yaml:"logger"`
+	Postgres PostgresConfig `yaml:"postgres"`
 }
 
 type GRPCConfig struct {
@@ -19,6 +20,15 @@ type GRPCConfig struct {
 
 type LoggerConfig struct {
 	Level string `yaml:"level"`
+}
+
+type PostgresConfig struct {
+	Host     string `yaml:"host"`
+	Port     uint   `yaml:"port"`
+	DbName   string `yaml:"db_name"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	SslMode  string `yaml:"sslmode"`
 }
 
 func MustLoad() *Config {

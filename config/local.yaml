@@ -12,3 +12,4 @@ postgres:
   db_name: users
   user: app_user
   password: app_user_pass
+  sslmode: disable
