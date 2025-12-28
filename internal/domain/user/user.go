@@ -3,11 +3,11 @@ package userdomain
 import "net/mail"
 
 type UserDomain struct {
-	FirstName string
+	FirstName  string
 	MiddleName string
-	LastName string
-	Password string
-	Email string
+	LastName   string
+	Password   string
+	Email      string
 }
 
 func NewUserDomain(firstName, middleName, lastName, password, email string) (*UserDomain, error) {
@@ -15,11 +15,11 @@ func NewUserDomain(firstName, middleName, lastName, password, email string) (*Us
 		return nil, ErrInvalidEmail
 	}
 	return &UserDomain{
-		FirstName: firstName,
+		FirstName:  firstName,
 		MiddleName: middleName,
-		LastName: lastName,
-		Password: password,
-		Email: email,
+		LastName:   lastName,
+		Password:   password,
+		Email:      email,
 	}, nil
 }
 
