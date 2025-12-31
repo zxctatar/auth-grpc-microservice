@@ -4,8 +4,12 @@ import (
 	authv1 "auth/internal/transport/grpc/pb"
 	"auth/internal/usecase/registration"
 	"context"
+	"errors"
 	"log/slog"
 	"time"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -27,7 +31,9 @@ func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC *registratio
 func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.RegistrationRequest) (*authv1.RegistrationResponse, error) {
 	const op = "handler.Registration"
 
-	ah.log.Info("new registration request", slog.String("op", op))
+	log := ah.log.With(slog.String("op", op))
+
+	log.Info("new registration request")
 
 	ctx, cancel := context.WithTimeout(ctx, *ah.timeOut)
 	defer cancel()
@@ -41,16 +47,22 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	)
 
 	if err != nil {
-		ah.log.Warn("cannot to create reg input", slog.String("op", op), slog.String("error", err.Error()))
-		return nil, err
+		log.Warn("cannot to create reg input", slog.String("error", err.Error()))
+		return nil, status.Error(codes.Internal, "internal server error")
 	}
 
 	id, err := ah.regUC.RegUser(ctx, regInput)
 
 	if err != nil {
-		ah.log.Warn("unsuccessful user registration", slog.String("op", op), slog.String("error", err.Error()))
-		return nil, err
+		if errors.Is(err, registration.ErrUserAlreadyExists) {
+			log.Info("registration is not possible", slog.String("error", err.Error()))
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		}
+		log.Warn("unsuccessful user registration", slog.String("error", err.Error()))
+		return nil, status.Error(codes.Internal, "internal server error")
 	}
+
+	log.Info("sending a response to the client")
 
 	return &authv1.RegistrationResponse{
 		UserId: id,
