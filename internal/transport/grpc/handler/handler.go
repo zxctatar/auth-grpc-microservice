@@ -48,7 +48,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 
 	if err != nil {
 		log.Warn("cannot to create reg input", slog.String("error", err.Error()))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	id, err := ah.regUC.RegUser(ctx, regInput)
@@ -56,7 +56,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	if err != nil {
 		if errors.Is(err, registration.ErrUserAlreadyExists) {
 			log.Info("registration is not possible", slog.String("error", err.Error()))
-			return nil, status.Error(codes.AlreadyExists, "user already exists")
+			return nil, status.Error(codes.AlreadyExists, err.Error())
 		}
 		log.Warn("unsuccessful user registration", slog.String("error", err.Error()))
 		return nil, status.Error(codes.Internal, "internal server error")
