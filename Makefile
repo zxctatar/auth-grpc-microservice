@@ -12,3 +12,9 @@ build_protoc:
 	rm -f ${PROTO_OUT}/user_grpc.pb.go
 	rm -f ${PROTO_OUT}/user.pb.go
 	protoc --go_out=${PROTO_OUT} --go_opt=paths=import --go-grpc_out=${PROTO_OUT} --go-grpc_opt=paths=import $(PROTO_PATH)
+
+migrate_all_up:
+	set -a; \
+	. ./.env; \
+	set +a; \
+	migrate -path ./migrations -database "postgres://$$MIG_NAME:$$MIG_PASS@$$DB_HOST:$$DB_PORT/$$DB_NAME?sslmode=$$SSLMODE" up
