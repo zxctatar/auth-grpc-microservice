@@ -1,6 +1,7 @@
 package handler
 
 import (
+	userdomain "auth/internal/domain/user"
 	authv1 "auth/internal/transport/grpc/pb"
 	"auth/internal/usecase/registration"
 	"context"
@@ -55,8 +56,11 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 
 	if err != nil {
 		if errors.Is(err, registration.ErrUserAlreadyExists) {
-			log.Info("registration is not possible", slog.String("error", err.Error()))
+			log.Info("registration failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.AlreadyExists, err.Error())
+		} else if errors.Is(err, userdomain.ErrInvalidEmail) {
+			log.Info("registration failed", slog.String("error", err.Error()))
+			return nil, status.Error(codes.InvalidArgument, "invalid mail format")
 		}
 		log.Warn("unsuccessful user registration", slog.String("error", err.Error()))
 		return nil, status.Error(codes.Internal, "internal server error")
