@@ -89,7 +89,7 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 
 	userOut := modelToDomain(&posModel)
 
-	p.log.Info("user found")
+	log.Info("user found")
 
 	return userOut, nil
 }
