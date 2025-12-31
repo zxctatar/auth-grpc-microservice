@@ -3,6 +3,7 @@ package registration
 import (
 	"auth/internal/repository"
 	"context"
+	"errors"
 	"log/slog"
 
 	"golang.org/x/crypto/bcrypt"
@@ -48,7 +49,7 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *RegInput) (uint32, er
 
 	userOut, err := ru.repo.FindByEmail(ctx, userInput.Email)
 
-	if err != nil {
+	if err != nil && !errors.Is(err, repository.ErrUserNotFound) {
 		log.Error("failed to find by email", slog.String("error", err.Error()))
 		return invalidId, err
 	}
