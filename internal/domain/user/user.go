@@ -10,10 +10,7 @@ type UserDomain struct {
 	Email        string
 }
 
-func NewUserDomain(firstName, middleName, lastName, password, email string) (*UserDomain, error) {
-	if !validatePassword(password) {
-		return nil, ErrInvalidPassword
-	}
+func NewUserDomain(firstName, middleName, lastName, hashPassword, email string) (*UserDomain, error) {
 	if !validateEmail(email) {
 		return nil, ErrInvalidEmail
 	}
@@ -21,19 +18,9 @@ func NewUserDomain(firstName, middleName, lastName, password, email string) (*Us
 		FirstName:    firstName,
 		MiddleName:   middleName,
 		LastName:     lastName,
-		HashPassword: password,
+		HashPassword: hashPassword,
 		Email:        email,
 	}, nil
-}
-
-func validatePassword(password string) bool {
-	passwordB := []byte(password)
-
-	if len(passwordB) < 5 || len(passwordB) > 20 {
-		return false
-	}
-
-	return true
 }
 
 func validateEmail(email string) bool {
