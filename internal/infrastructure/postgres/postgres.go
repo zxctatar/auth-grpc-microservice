@@ -9,6 +9,10 @@ import (
 	"log/slog"
 )
 
+var (
+	invalidId uint32 = 0
+)
+
 type Postgres struct {
 	log *slog.Logger
 	db  *sql.DB
@@ -22,7 +26,36 @@ func NewPostgres(log *slog.Logger, db *sql.DB) *Postgres {
 }
 
 func (p *Postgres) Save(ctx context.Context, user *userdomain.UserDomain) (uint32, error) {
-	panic("not implemented")
+	const op = "postgres.Save"
+
+	log := p.log.With(slog.String("op", op), slog.String("user email", user.Email))
+
+	log.Info("start save user")
+
+	posModel := domainToModel(user)
+
+	row := p.db.QueryRowContext(ctx,
+		`INSERT INTO users (first_name, middle_name, last_name, hash_password, email)
+	VALUES($1, $2, $3, $4, $5) RETURNING id`,
+		posModel.FirstName,
+		posModel.MiddleName,
+		posModel.LastName,
+		posModel.HashPassword,
+		posModel.Email,
+	)
+
+	var userId uint32 = 0
+
+	err := row.Scan(&userId)
+
+	if err != nil {
+		log.Warn("failed to save user", slog.String("error", err.Error()))
+		return invalidId, err
+	}
+
+	log.Info("the user has been saved")
+
+	return userId, nil
 }
 
 func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.UserDomain, error) {
