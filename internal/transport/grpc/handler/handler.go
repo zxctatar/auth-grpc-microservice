@@ -22,7 +22,7 @@ type AuthHandler struct {
 	regUC   usecase.RegistrationUseCase
 }
 
-func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC *registration.RegistrationUC) *AuthHandler {
+func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecase.RegistrationUseCase) *AuthHandler {
 	return &AuthHandler{
 		log:     log,
 		timeOut: timeOut,
