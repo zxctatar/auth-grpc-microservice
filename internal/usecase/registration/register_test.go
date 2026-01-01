@@ -3,6 +3,7 @@ package registration
 import (
 	userdomain "auth/internal/domain/user"
 	"auth/internal/repository"
+	"auth/internal/usecase"
 	"context"
 	"io"
 	"log/slog"
@@ -31,7 +32,7 @@ func TestRegister_Success(t *testing.T) {
 	pass := "somePass"
 	email := "mail@mail.ru"
 
-	ri, err := NewRegInput(
+	ri, err := usecase.NewRegInput(
 		firstName,
 		middleName,
 		lastName,
@@ -80,7 +81,7 @@ func TestRegister_UserAlreadyExists(t *testing.T) {
 	pass := "somePass"
 	email := "mail@mail.ru"
 
-	ri, err := NewRegInput(
+	ri, err := usecase.NewRegInput(
 		firstName,
 		middleName,
 		lastName,

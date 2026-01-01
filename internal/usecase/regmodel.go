@@ -1,4 +1,4 @@
-package registration
+package usecase
 
 type RegInput struct {
 	FirstName  string

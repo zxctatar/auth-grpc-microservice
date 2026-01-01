@@ -3,6 +3,7 @@ package handler
 import (
 	userdomain "auth/internal/domain/user"
 	authv1 "auth/internal/transport/grpc/pb"
+	"auth/internal/usecase"
 	"auth/internal/usecase/registration"
 	"context"
 	"errors"
@@ -18,7 +19,7 @@ type AuthHandler struct {
 
 	log     *slog.Logger
 	timeOut *time.Duration
-	regUC   *registration.RegistrationUC
+	regUC   usecase.RegistrationUseCase
 }
 
 func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC *registration.RegistrationUC) *AuthHandler {
@@ -39,7 +40,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	ctx, cancel := context.WithTimeout(ctx, *ah.timeOut)
 	defer cancel()
 
-	regInput, err := registration.NewRegInput(
+	regInput, err := usecase.NewRegInput(
 		rr.FirstName,
 		rr.MiddleName,
 		rr.LastName,
