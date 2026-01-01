@@ -57,7 +57,7 @@ func TestNewUserDomain_InvalidEmail(t *testing.T) {
 		email,
 	)
 
-	assert.Error(t, err, ErrInvalidEmail)
+	assert.ErrorIs(t, err, ErrInvalidEmail)
 
 	email = "mail@.ru"
 
@@ -69,7 +69,7 @@ func TestNewUserDomain_InvalidEmail(t *testing.T) {
 		email,
 	)
 
-	assert.Error(t, err, ErrInvalidEmail)
+	assert.ErrorIs(t, err, ErrInvalidEmail)
 }
 
 func TestRestoreUserDomain(t *testing.T) {
