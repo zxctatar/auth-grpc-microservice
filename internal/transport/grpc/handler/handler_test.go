@@ -127,11 +127,11 @@ func TestRegistration_InvalidEmail(t *testing.T) {
 
 func TestRegistration_Canceled(t *testing.T) {
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
-	timeOut := 2 * time.Second
+	timeOut := 1 * time.Millisecond
 	regUCMock := registrationUCMock{
 		regUserFn: func(ctx context.Context, ri *regmodels.RegInput) (uint32, error) {
 			select {
-			case <-time.After(3 * time.Second):
+			case <-time.After(2 * time.Millisecond):
 				return 1, nil
 			case <-ctx.Done():
 				return 1, ctx.Err()
