@@ -15,8 +15,8 @@ func TestMustLoad_OK(t *testing.T) {
 
 	cfg := MustLoad()
 
-	assert.Equal(t, cfg.GRPC.TimeOut, 15 * time.Second)
-	assert.Equal(t, cfg.GRPC.Port ,44044)
+	assert.Equal(t, cfg.GRPC.TimeOut, 15*time.Second)
+	assert.Equal(t, cfg.GRPC.Port, 44044)
 	assert.Equal(t, cfg.Postgres.Port, uint(5432))
 	assert.Equal(t, cfg.Postgres.DbName, "users")
 }
