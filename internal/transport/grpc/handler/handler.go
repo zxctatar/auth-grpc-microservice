@@ -63,7 +63,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 		} else if errors.Is(err, userdomain.ErrInvalidEmail) {
 			log.Warn("registration failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.InvalidArgument, "invalid mail format")
-		} else if errors.Is(err, context.Canceled) {
+		} else if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 			log.Warn("long query execution", slog.String("error", err.Error()))
 			return nil, status.Error(codes.Canceled, "the request was canceled")
 		}

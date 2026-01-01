@@ -1,6 +1,7 @@
 package handler
 
 import (
+	userdomain "auth/internal/domain/user"
 	authv1 "auth/internal/transport/grpc/pb"
 	"auth/internal/usecase/implementations/registration"
 	regmodels "auth/internal/usecase/models/registration"
@@ -89,4 +90,79 @@ func TestRegistration_UserAlreadyExists(t *testing.T) {
 	st, ok := status.FromError(err)
 	assert.True(t, ok)
 	assert.Equal(t, st.Code(), codes.AlreadyExists)
+}
+
+func TestRegistration_InvalidEmail(t *testing.T) {
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	timeOut := 5 * time.Second
+	regUCMock := &registrationUCMock{
+		regUserFn: func(ctx context.Context, ri *regmodels.RegInput) (uint32, error) {
+			return 0, userdomain.ErrInvalidEmail
+		},
+	}
+
+	handler := NewAuthHandler(log, &timeOut, regUCMock)
+
+	firstName := "Ivan"
+	middleName := "Ivanovich"
+	lastName := "Ivanov"
+	pass := "somePass"
+	email := "123"
+
+	req := &authv1.RegistrationRequest{
+		FirstName:  firstName,
+		MiddleName: middleName,
+		LastName:   lastName,
+		Password:   pass,
+		Email:      email,
+	}
+
+	res, err := handler.Registration(context.Background(), req)
+
+	assert.Nil(t, res)
+	st, ok := status.FromError(err)
+	assert.True(t, ok)
+	assert.Equal(t, st.Code(), codes.InvalidArgument)
+}
+
+func TestRegistration_Canceled(t *testing.T) {
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	timeOut := 2 * time.Second
+	regUCMock := registrationUCMock{
+		regUserFn: func(ctx context.Context, ri *regmodels.RegInput) (uint32, error) {
+			select {
+			case <-time.After(3 * time.Second):
+				return 1, nil
+			case <-ctx.Done():
+				return 1, ctx.Err()
+			}
+		},
+	}
+
+	handler := NewAuthHandler(log, &timeOut, &regUCMock)
+
+	firstName := "Ivan"
+	middleName := "Ivanovich"
+	lastName := "Ivanov"
+	pass := "somePass"
+	email := "123"
+
+	req := &authv1.RegistrationRequest{
+		FirstName:  firstName,
+		MiddleName: middleName,
+		LastName:   lastName,
+		Password:   pass,
+		Email:      email,
+	}
+
+	res, err := handler.Registration(context.Background(), req)
+
+	assert.Nil(t, res)
+	st, ok := status.FromError(err)
+	assert.True(t, ok)
+	if st.Code() != codes.DeadlineExceeded {
+		assert.Equal(t, st.Code(), codes.Canceled)
+	} else {
+		assert.Equal(t, st.Code(), codes.DeadlineExceeded)
+	}
 }
