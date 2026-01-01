@@ -3,8 +3,9 @@ package handler
 import (
 	userdomain "auth/internal/domain/user"
 	authv1 "auth/internal/transport/grpc/pb"
-	"auth/internal/usecase"
-	"auth/internal/usecase/registration"
+	"auth/internal/usecase/implementations/registration"
+	usecaseinterf "auth/internal/usecase/interfaces"
+	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"errors"
 	"log/slog"
@@ -19,10 +20,10 @@ type AuthHandler struct {
 
 	log     *slog.Logger
 	timeOut *time.Duration
-	regUC   usecase.RegistrationUseCase
+	regUC   usecaseinterf.RegistrationUseCase
 }
 
-func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecase.RegistrationUseCase) *AuthHandler {
+func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecaseinterf.RegistrationUseCase) *AuthHandler {
 	return &AuthHandler{
 		log:     log,
 		timeOut: timeOut,
@@ -40,7 +41,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	ctx, cancel := context.WithTimeout(ctx, *ah.timeOut)
 	defer cancel()
 
-	regInput, err := usecase.NewRegInput(
+	regInput, err := regmodels.NewRegInput(
 		rr.FirstName,
 		rr.MiddleName,
 		rr.LastName,

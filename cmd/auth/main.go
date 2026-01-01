@@ -5,7 +5,7 @@ import (
 	"auth/internal/infrastructure/postgres"
 	grpcserv "auth/internal/transport/grpc"
 	"auth/internal/transport/grpc/handler"
-	"auth/internal/usecase/registration"
+	"auth/internal/usecase/implementations/registration"
 	"auth/pkg/logger"
 	"database/sql"
 	"fmt"

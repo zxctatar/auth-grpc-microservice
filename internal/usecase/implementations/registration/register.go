@@ -2,7 +2,7 @@ package registration
 
 import (
 	"auth/internal/repository"
-	"auth/internal/usecase"
+	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"errors"
 	"log/slog"
@@ -27,7 +27,7 @@ func NewRegistrationUC(log *slog.Logger, repo repository.StorageRepo) *Registrat
 	}
 }
 
-func (ru *RegistrationUC) RegUser(ctx context.Context, ri *usecase.RegInput) (uint32, error) {
+func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (uint32, error) {
 	const op = "registration.RegUser"
 
 	log := ru.log.With(slog.String("op", op), slog.String("email", ri.Email))

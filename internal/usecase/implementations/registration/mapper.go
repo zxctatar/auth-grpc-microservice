@@ -2,10 +2,10 @@ package registration
 
 import (
 	userdomain "auth/internal/domain/user"
-	"auth/internal/usecase"
+	regmodels "auth/internal/usecase/models/registration"
 )
 
-func modelToDomain(ri *usecase.RegInput, hashPass string) (*userdomain.UserDomain, error) {
+func modelToDomain(ri *regmodels.RegInput, hashPass string) (*userdomain.UserDomain, error) {
 	user, err := userdomain.NewUserDomain(
 		ri.FirstName,
 		ri.MiddleName,
