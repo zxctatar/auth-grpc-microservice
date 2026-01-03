@@ -2,7 +2,7 @@ package postgres
 
 import (
 	userdomain "auth/internal/domain/user"
-	"auth/internal/repository"
+	"auth/internal/repository/storagerepo"
 	"context"
 	"database/sql"
 	"io"
@@ -89,5 +89,5 @@ func TestFindByEmail_UserNotFound(t *testing.T) {
 
 	_, err = repo.FindByEmail(context.Background(), email)
 
-	assert.ErrorIs(t, err, repository.ErrUserNotFound)
+	assert.ErrorIs(t, err, storagerepo.ErrUserNotFound)
 }

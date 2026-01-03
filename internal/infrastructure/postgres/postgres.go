@@ -2,7 +2,7 @@ package postgres
 
 import (
 	userdomain "auth/internal/domain/user"
-	"auth/internal/repository"
+	"auth/internal/repository/storagerepo"
 	logmodel "auth/internal/usecase/models/login"
 	"context"
 	"database/sql"
@@ -82,7 +82,7 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log.Info("unsuccessful user search by email", slog.String("error", err.Error()))
-			return nil, repository.ErrUserNotFound
+			return nil, storagerepo.ErrUserNotFound
 		}
 		log.Error("error searching for user by email", slog.String("error", err.Error()))
 		return nil, err
