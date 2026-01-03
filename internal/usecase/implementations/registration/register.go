@@ -1,7 +1,7 @@
 package registration
 
 import (
-	"auth/internal/repository"
+	"auth/internal/repository/storagerepo"
 	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"errors"
@@ -16,10 +16,10 @@ var (
 
 type RegistrationUC struct {
 	log  *slog.Logger
-	repo repository.StorageRepo
+	repo storagerepo.StorageRepo
 }
 
-func NewRegistrationUC(log *slog.Logger, repo repository.StorageRepo) *RegistrationUC {
+func NewRegistrationUC(log *slog.Logger, repo storagerepo.StorageRepo) *RegistrationUC {
 	return &RegistrationUC{
 		log:  log,
 		repo: repo,
@@ -49,7 +49,7 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 
 	userOut, err := ru.repo.FindByEmail(ctx, userInput.Email)
 
-	if err != nil && !errors.Is(err, repository.ErrUserNotFound) {
+	if err != nil && !errors.Is(err, storagerepo.ErrUserNotFound) {
 		log.Error("failed to find by email", slog.String("error", err.Error()))
 		return invalidId, err
 	}

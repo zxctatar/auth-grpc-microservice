@@ -2,7 +2,7 @@ package registration
 
 import (
 	userdomain "auth/internal/domain/user"
-	"auth/internal/repository"
+	"auth/internal/repository/storagerepo"
 	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"io"
@@ -15,7 +15,7 @@ import (
 func TestRegister_Success(t *testing.T) {
 	repoMock := &storageRepoMock{
 		findByEmailFn: func(ctx context.Context, email string) (*userdomain.UserDomain, error) {
-			return nil, repository.ErrUserNotFound
+			return nil, storagerepo.ErrUserNotFound
 		},
 		saveFn: func(ctx context.Context, user *userdomain.UserDomain) (uint32, error) {
 			return 1, nil
