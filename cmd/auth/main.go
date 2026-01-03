@@ -5,6 +5,7 @@ import (
 	"auth/internal/infrastructure/postgres"
 	grpcserv "auth/internal/transport/grpc"
 	"auth/internal/transport/grpc/handler"
+	"auth/internal/usecase/implementations/login"
 	"auth/internal/usecase/implementations/registration"
 	"auth/pkg/logger"
 	"database/sql"
@@ -45,8 +46,9 @@ func main() {
 	postg := postgres.NewPostgres(log, db)
 
 	regUC := registration.NewRegistrationUC(log, postg)
+	loginUC := login.NewLoginUc(log, postg)
 
-	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC)
+	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC, loginUC)
 
 	server := grpcserv.NewServer(log, authHandl)
 

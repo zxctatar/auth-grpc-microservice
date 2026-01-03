@@ -21,13 +21,15 @@ type AuthHandler struct {
 	log     *slog.Logger
 	timeOut *time.Duration
 	regUC   usecaseinterf.RegistrationUseCase
+	loginUC usecaseinterf.LoginUseCase
 }
 
-func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecaseinterf.RegistrationUseCase) *AuthHandler {
+func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecaseinterf.RegistrationUseCase, loginUC usecaseinterf.LoginUseCase) *AuthHandler {
 	return &AuthHandler{
 		log:     log,
 		timeOut: timeOut,
 		regUC:   regUC,
+		loginUC: loginUC,
 	}
 }
 
