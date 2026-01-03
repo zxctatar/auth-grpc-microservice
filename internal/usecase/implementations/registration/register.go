@@ -15,8 +15,7 @@ var (
 )
 
 type RegistrationUC struct {
-	log *slog.Logger
-
+	log  *slog.Logger
 	repo repository.StorageRepo
 }
 

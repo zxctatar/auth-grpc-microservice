@@ -1,7 +1,7 @@
 package logmodel
 
 type LoginInput struct {
-	Email string
+	Email    string
 	Password string
 }
 
@@ -13,7 +13,7 @@ func NewLoginInput(email, password string) (*LoginInput, error) {
 	}
 
 	return &LoginInput{
-		Email: email,
+		Email:    email,
 		Password: password,
 	}, nil
 }
