@@ -23,7 +23,7 @@ type JWTService struct {
 func NewJWTService(secretKey string, timeOut *time.Duration) *JWTService {
 	return &JWTService{
 		SecretKey: secretKey,
-		TimeOut: timeOut,
+		TimeOut:   timeOut,
 	}
 }
 
