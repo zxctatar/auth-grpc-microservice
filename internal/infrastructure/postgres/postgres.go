@@ -3,6 +3,7 @@ package postgres
 import (
 	userdomain "auth/internal/domain/user"
 	"auth/internal/repository"
+	logmodel "auth/internal/usecase/models/login"
 	"context"
 	"database/sql"
 	"errors"
@@ -92,4 +93,8 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 	log.Info("user found")
 
 	return userOut, nil
+}
+
+func (p *Postgres) FindAuthDataByEmail(ctx context.Context, email string) (*logmodel.UserAuthData, error) {
+	panic("not implemented")
 }
