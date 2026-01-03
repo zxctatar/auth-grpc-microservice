@@ -3,6 +3,7 @@ package handler
 import (
 	userdomain "auth/internal/domain/user"
 	authv1 "auth/internal/transport/grpc/pb"
+	"auth/internal/usecase/implementations/login"
 	"auth/internal/usecase/implementations/registration"
 	usecaseinterf "auth/internal/usecase/interfaces"
 	logmodel "auth/internal/usecase/models/login"
@@ -104,7 +105,14 @@ func (ah *AuthHandler) Login(ctx context.Context, lg *authv1.LoginRequest) (*aut
 	token, err := ah.loginUC.Login(ctx, loginInput)
 
 	if err != nil {
-
+		if errors.Is(err, login.ErrUserNotFound) {
+			log.Info("login failed", slog.String("error", err.Error()))
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		if errors.Is(err, login.ErrWrongPassword) {
+			log.Info("login failed", slog.String("error", err.Error()))
+			return nil, status.Error(codes.Unauthenticated, err.Error())
+		}
 	}
 
 	return &authv1.LoginResponse{
