@@ -2,6 +2,7 @@ grpc:
   port: 44044
   timeout: 15s
   jwtSecretKey: secretKey
+  jwtTimeOut: 1h
 
 logger:
   level: debug

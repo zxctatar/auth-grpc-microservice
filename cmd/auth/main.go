@@ -2,6 +2,7 @@ package main
 
 import (
 	"auth/internal/config"
+	jwtservice "auth/internal/infrastructure/jwt"
 	"auth/internal/infrastructure/postgres"
 	grpcserv "auth/internal/transport/grpc"
 	"auth/internal/transport/grpc/handler"
@@ -44,9 +45,10 @@ func main() {
 	}
 
 	postg := postgres.NewPostgres(log, db)
+	tokService := jwtservice.NewJWTService(cfg.GRPC.JWTSecretKey, &cfg.GRPC.JWTTimeOut)
 
 	regUC := registration.NewRegistrationUC(log, postg)
-	loginUC := login.NewLoginUc(log, postg)
+	loginUC := login.NewLoginUc(log, postg, tokService)
 
 	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC, loginUC)
 

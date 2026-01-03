@@ -18,6 +18,7 @@ type GRPCConfig struct {
 	Port         int           `yaml:"port"`
 	TimeOut      time.Duration `yaml:"timeout"`
 	JWTSecretKey string        `yaml:"jwtSecretKey"`
+	JWTTimeOut   time.Duration `yaml:"jwtTimeOut"`
 }
 
 type LoggerConfig struct {
