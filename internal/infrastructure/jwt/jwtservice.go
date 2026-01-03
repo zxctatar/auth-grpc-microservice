@@ -11,7 +11,7 @@ var (
 )
 
 type CustomClaim struct {
-	Id uint32
+	Id uint32 `json:"id"`
 	jwt.RegisteredClaims
 }
 
