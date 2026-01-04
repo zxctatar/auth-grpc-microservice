@@ -68,7 +68,7 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 
 	row := p.db.QueryRowContext(ctx, "SELECT id, first_name, middle_name, last_name, hash_password, email FROM users WHERE email = $1", email)
 
-	var posModel PostgresModel
+	var posModel PostgresUserModel
 
 	err := row.Scan(
 		&posModel.Id,

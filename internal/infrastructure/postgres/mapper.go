@@ -4,7 +4,7 @@ import (
 	userdomain "auth/internal/domain/user"
 )
 
-func modelToDomain(pm *PostgresModel) *userdomain.UserDomain {
+func modelToDomain(pm *PostgresUserModel) *userdomain.UserDomain {
 	return userdomain.RestoreUserDomain(
 		pm.FirstName,
 		pm.MiddleName.String,
@@ -14,7 +14,7 @@ func modelToDomain(pm *PostgresModel) *userdomain.UserDomain {
 	)
 }
 
-func domainToModel(ud *userdomain.UserDomain) *PostgresModel {
+func domainToModel(ud *userdomain.UserDomain) *PostgresUserModel {
 	return NewPostgresModel(
 		0,
 		ud.FirstName,
