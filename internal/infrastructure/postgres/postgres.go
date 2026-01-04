@@ -2,6 +2,7 @@ package postgres
 
 import (
 	userdomain "auth/internal/domain/user"
+	posmodel "auth/internal/infrastructure/postgres/posmodels"
 	"auth/internal/repository/storagerepo"
 	logmodel "auth/internal/usecase/models/login"
 	"context"
@@ -68,7 +69,7 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 
 	row := p.db.QueryRowContext(ctx, "SELECT id, first_name, middle_name, last_name, hash_password, email FROM users WHERE email = $1", email)
 
-	var posModel PostgresUserModel
+	var posModel posmodel.PostgresUserModel
 
 	err := row.Scan(
 		&posModel.Id,
@@ -96,5 +97,33 @@ func (p *Postgres) FindByEmail(ctx context.Context, email string) (*userdomain.U
 }
 
 func (p *Postgres) FindAuthDataByEmail(ctx context.Context, email string) (*logmodel.UserAuthData, error) {
-	panic("not implemented")
+	const op = "postgres.FindAuthDataByEmail"
+
+	log := p.log.With(slog.String("op", op), slog.String("email", email))
+
+	log.Info("start find auth data by email")
+
+	row := p.db.QueryRowContext(ctx, "SELECT id, hash_password FROM users WHERE email = $1", email)
+
+	var posAuthData posmodel.PostgresUserAuthDataModel
+
+	err := row.Scan(
+		&posAuthData.Id,
+		&posAuthData.HashPassword,
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Info("unsuccessful attempt to get auth user data", slog.String("error", err.Error()))
+			return nil, storagerepo.ErrUserNotFound
+		}
+		log.Error("error retrieving auth user data", slog.String("error", err.Error()))
+		return nil, err
+	}
+
+	userAuthData := modelToUserAuthData(&posAuthData)
+
+	log.Info("data found")
+
+	return userAuthData, nil
 }
