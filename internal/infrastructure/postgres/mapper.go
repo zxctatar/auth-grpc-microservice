@@ -2,10 +2,11 @@ package postgres
 
 import (
 	userdomain "auth/internal/domain/user"
+	posmodel "auth/internal/infrastructure/postgres/posmodels"
 	logmodel "auth/internal/usecase/models/login"
 )
 
-func modelToDomain(pm *PostgresUserModel) *userdomain.UserDomain {
+func modelToDomain(pm *posmodel.PostgresUserModel) *userdomain.UserDomain {
 	return userdomain.RestoreUserDomain(
 		pm.FirstName,
 		pm.MiddleName.String,
@@ -15,8 +16,8 @@ func modelToDomain(pm *PostgresUserModel) *userdomain.UserDomain {
 	)
 }
 
-func domainToModel(ud *userdomain.UserDomain) *PostgresUserModel {
-	return NewPostgresModel(
+func domainToModel(ud *userdomain.UserDomain) *posmodel.PostgresUserModel {
+	return posmodel.NewPostgresModel(
 		0,
 		ud.FirstName,
 		ud.MiddleName,
@@ -26,7 +27,7 @@ func domainToModel(ud *userdomain.UserDomain) *PostgresUserModel {
 	)
 }
 
-func modelToUserAuthData(pu *PostgresUserAuthDataModel) *logmodel.UserAuthData {
+func modelToUserAuthData(pu *posmodel.PostgresUserAuthDataModel) *logmodel.UserAuthData {
 	return logmodel.NewUserAuthData(
 		pu.Id,
 		pu.HashPassword,

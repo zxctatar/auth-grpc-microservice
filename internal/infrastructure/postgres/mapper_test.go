@@ -2,6 +2,7 @@ package postgres
 
 import (
 	userdomain "auth/internal/domain/user"
+	posmodel "auth/internal/infrastructure/postgres/posmodels"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,7 @@ func TestModelToDomain_Success(t *testing.T) {
 	hashPass := "somePass"
 	email := "mail@mail.ru"
 
-	posModel := NewPostgresModel(
+	posModel := posmodel.NewPostgresModel(
 		id,
 		firstName,
 		middleName,
@@ -62,7 +63,7 @@ func TestModelToUserAuthData_Succe(t *testing.T) {
 	id := uint32(1)
 	hashPassword, _ := bcrypt.GenerateFromPassword([]byte("somePass"), bcrypt.DefaultCost)
 
-	posModel := NewPostgresUserAuthDataModel(id, string(hashPassword))
+	posModel := posmodel.NewPostgresUserAuthDataModel(id, string(hashPassword))
 
 	userData := modelToUserAuthData(posModel)
 
