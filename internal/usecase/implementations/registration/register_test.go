@@ -51,6 +51,10 @@ func TestRegister_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, id, uint32(1))
+
+	assert.True(t, repoMock.findByEmailCalled)
+	assert.True(t, repoMock.saveCalled)
+	assert.True(t, hashMock.genCalled)
 }
 
 func TestRegister_UserAlreadyExists(t *testing.T) {
@@ -72,12 +76,14 @@ func TestRegister_UserAlreadyExists(t *testing.T) {
 			return user, nil
 		},
 		saveFn: func(ctx context.Context, user *userdomain.UserDomain) (uint32, error) {
+			t.Fatal("save must not be called if user already exists")
 			return invalidId, nil
 		},
 	}
 	hashMock := &hashServiceMock{
 		genFn: func(password []byte) ([]byte, error) {
-			return []byte("hashPass"), nil
+			t.Fatal("hash must not be generated if user already exists")
+			return nil, nil
 		},
 	}
 
@@ -104,4 +110,6 @@ func TestRegister_UserAlreadyExists(t *testing.T) {
 	_, err = regUc.RegUser(context.Background(), ri)
 
 	assert.ErrorIs(t, err, ErrUserAlreadyExists)
+
+	assert.True(t, repoMock.findByEmailCalled)
 }
