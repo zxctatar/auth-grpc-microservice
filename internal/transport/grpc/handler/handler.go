@@ -2,6 +2,7 @@ package handler
 
 import (
 	userdomain "auth/internal/domain/user"
+	"auth/internal/repository/storagerepo"
 	authv1 "auth/internal/transport/grpc/pb"
 	"auth/internal/usecase/implementations/login"
 	"auth/internal/usecase/implementations/registration"
@@ -105,7 +106,7 @@ func (ah *AuthHandler) Login(ctx context.Context, lg *authv1.LoginRequest) (*aut
 	token, err := ah.loginUC.Login(ctx, loginInput)
 
 	if err != nil {
-		if errors.Is(err, login.ErrUserNotFound) {
+		if errors.Is(err, storagerepo.ErrUserNotFound) {
 			log.Info("login failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
