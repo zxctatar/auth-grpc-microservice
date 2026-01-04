@@ -8,7 +8,7 @@ func NewHasher() *Hasher {
 	return &Hasher{}
 }
 
-func (h *Hasher) Generate(password []byte) ([]byte, error) {
+func (h *Hasher) GenerateHashPassword(password []byte) ([]byte, error) {
 	hashPass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return hashPass, err
 }
