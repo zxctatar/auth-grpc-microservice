@@ -5,7 +5,6 @@ import (
 	"auth/internal/repository/tokenservice"
 	logmodel "auth/internal/usecase/models/login"
 	"context"
-	"database/sql"
 	"errors"
 	"log/slog"
 
@@ -40,9 +39,9 @@ func (l *LoginUC) Login(ctx context.Context, li *logmodel.LoginInput) (string, e
 	authData, err := l.repo.FindAuthDataByEmail(ctx, li.Email)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, storagerepo.ErrUserNotFound) {
 			log.Info("failed user login", slog.String("error", err.Error()))
-			return invalidToken, ErrUserNotFound
+			return invalidToken, err
 		}
 		log.Warn("failed user login", slog.String("error", err.Error()))
 		return invalidToken, err
