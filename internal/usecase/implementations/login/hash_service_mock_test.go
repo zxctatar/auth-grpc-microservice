@@ -8,7 +8,7 @@ type hashServiceMock struct {
 	comFn func(hashPass, password []byte) error
 }
 
-func (h *hashServiceMock) Generate(password []byte) ([]byte, error) {
+func (h *hashServiceMock) GenerateHashPassword(password []byte) ([]byte, error) {
 	h.genCalled = true
 	return h.genFn(password)
 }

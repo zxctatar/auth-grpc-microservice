@@ -45,7 +45,7 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 		return invalidId, ErrUserAlreadyExists
 	}
 
-	hashPass, err := ru.hasher.Generate([]byte(ri.Password))
+	hashPass, err := ru.hasher.GenerateHashPassword([]byte(ri.Password))
 
 	if err != nil {
 		log.Error("failed to create hash password", slog.String("error", err.Error()))
