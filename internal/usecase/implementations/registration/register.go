@@ -34,6 +34,17 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 
 	log.Info("starting user registartion")
 
+	userOut, err := ru.repo.FindByEmail(ctx, ri.Email)
+
+	if err != nil && !errors.Is(err, storagerepo.ErrUserNotFound) {
+		log.Error("failed to find by email", slog.String("error", err.Error()))
+		return invalidId, err
+	}
+	if userOut != nil {
+		log.Info("user already exists")
+		return invalidId, ErrUserAlreadyExists
+	}
+
 	hashPass, err := ru.hasher.Generate([]byte(ri.Password))
 
 	if err != nil {
@@ -46,17 +57,6 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 	if err != nil {
 		log.Warn("failed to create a user domain from reg input", slog.String("error", err.Error()))
 		return invalidId, err
-	}
-
-	userOut, err := ru.repo.FindByEmail(ctx, userInput.Email)
-
-	if err != nil && !errors.Is(err, storagerepo.ErrUserNotFound) {
-		log.Error("failed to find by email", slog.String("error", err.Error()))
-		return invalidId, err
-	}
-	if userOut != nil {
-		log.Info("user already exists")
-		return invalidId, ErrUserAlreadyExists
 	}
 
 	newId, err := ru.repo.Save(ctx, userInput)
