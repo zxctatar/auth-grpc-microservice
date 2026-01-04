@@ -113,6 +113,8 @@ func (ah *AuthHandler) Login(ctx context.Context, lg *authv1.LoginRequest) (*aut
 			log.Info("login failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
+		log.Warn("unsuccessful user login", slog.String("error", err.Error()))
+		return nil, status.Error(codes.Internal, "internal server error")
 	}
 
 	return &authv1.LoginResponse{
