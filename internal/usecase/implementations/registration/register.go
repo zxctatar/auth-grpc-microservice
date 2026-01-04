@@ -1,13 +1,12 @@
 package registration
 
 import (
+	"auth/internal/repository/hashservice"
 	"auth/internal/repository/storagerepo"
 	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"errors"
 	"log/slog"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -15,14 +14,16 @@ var (
 )
 
 type RegistrationUC struct {
-	log  *slog.Logger
-	repo storagerepo.StorageRepo
+	log    *slog.Logger
+	repo   storagerepo.StorageRepo
+	hasher hashservice.HashService
 }
 
-func NewRegistrationUC(log *slog.Logger, repo storagerepo.StorageRepo) *RegistrationUC {
+func NewRegistrationUC(log *slog.Logger, repo storagerepo.StorageRepo, hasher hashservice.HashService) *RegistrationUC {
 	return &RegistrationUC{
-		log:  log,
-		repo: repo,
+		log:    log,
+		repo:   repo,
+		hasher: hasher,
 	}
 }
 
@@ -33,7 +34,7 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 
 	log.Info("starting user registartion")
 
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(ri.Password), bcrypt.DefaultCost)
+	hashPass, err := ru.hasher.Generate([]byte(ri.Password))
 
 	if err != nil {
 		log.Error("failed to create hash password", slog.String("error", err.Error()))

@@ -21,10 +21,15 @@ func TestRegister_Success(t *testing.T) {
 			return 1, nil
 		},
 	}
+	hashMock := &hashServiceMock{
+		genFn: func(password []byte) ([]byte, error) {
+			return []byte("hashPass"), nil
+		},
+	}
 
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	regUc := NewRegistrationUC(log, repoMock)
+	regUc := NewRegistrationUC(log, repoMock, hashMock)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
@@ -70,10 +75,15 @@ func TestRegister_UserAlreadyExists(t *testing.T) {
 			return invalidId, nil
 		},
 	}
+	hashMock := &hashServiceMock{
+		genFn: func(password []byte) ([]byte, error) {
+			return []byte("hashPass"), nil
+		},
+	}
 
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	regUc := NewRegistrationUC(log, repoMock)
+	regUc := NewRegistrationUC(log, repoMock, hashMock)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
