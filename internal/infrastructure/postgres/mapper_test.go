@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestModelToDomain_Success(t *testing.T) {
@@ -55,4 +56,16 @@ func TestDomainToModel_Success(t *testing.T) {
 	assert.Equal(t, posModel.LastName, user.LastName)
 	assert.Equal(t, posModel.HashPassword, user.HashPassword)
 	assert.Equal(t, posModel.Email, user.Email)
+}
+
+func TestModelToUserAuthData_Succe(t *testing.T) {
+	id := uint32(1)
+	hashPassword, _ := bcrypt.GenerateFromPassword([]byte("somePass"), bcrypt.DefaultCost)
+
+	posModel := NewPostgresUserAuthDataModel(id, string(hashPassword))
+
+	userData := modelToUserAuthData(posModel)
+
+	assert.Equal(t, posModel.Id, userData.Id)
+	assert.Equal(t, posModel.HashPassword, userData.HashPassword)
 }
