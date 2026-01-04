@@ -50,7 +50,7 @@ func (l *LoginUC) Login(ctx context.Context, li *logmodel.LoginInput) (string, e
 	err = bcrypt.CompareHashAndPassword([]byte(authData.HashPassword), []byte(li.Password))
 
 	if err != nil {
-		log.Warn("wrong password", slog.String("error", err.Error()))
+		log.Info("wrong password", slog.String("error", err.Error()))
 		return invalidToken, ErrWrongPassword
 	}
 
