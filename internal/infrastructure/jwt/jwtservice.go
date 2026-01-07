@@ -48,3 +48,7 @@ func (j *JWTService) Generate(id uint32) (string, error) {
 
 	return tokenString, nil
 }
+
+func (j *JWTService) ValidateToken(token string) (bool, error) {
+	return true, nil
+}

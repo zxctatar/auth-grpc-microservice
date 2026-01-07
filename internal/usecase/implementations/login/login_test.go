@@ -48,7 +48,7 @@ func TestLogin_Success(t *testing.T) {
 	assert.Equal(t, "token", token)
 
 	assert.True(t, repoMock.findAuthDataByEmailCalled)
-	assert.True(t, tokenMock.genCalled)
+	assert.True(t, tokenMock.genFnCalled)
 	assert.True(t, hashMock.comCalled)
 }
 
