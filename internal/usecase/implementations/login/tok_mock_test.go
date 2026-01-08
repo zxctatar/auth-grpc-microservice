@@ -5,7 +5,7 @@ type tokenServiceMock struct {
 	validTokenCalled bool
 
 	genFn        func(id uint32) (string, error)
-	validTokenFn func(token string) (bool, error)
+	validTokenFn func(token string) (uint32, error)
 }
 
 func (t *tokenServiceMock) Generate(id uint32) (string, error) {
@@ -13,7 +13,7 @@ func (t *tokenServiceMock) Generate(id uint32) (string, error) {
 	return t.genFn(id)
 }
 
-func (t *tokenServiceMock) ValidateToken(token string) (bool, error) {
+func (t *tokenServiceMock) ValidateToken(token string) (uint32, error) {
 	t.validTokenCalled = true
 	return t.validTokenFn(token)
 }

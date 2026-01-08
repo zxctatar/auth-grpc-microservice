@@ -8,6 +8,7 @@ import (
 
 var (
 	invalidToken = ""
+	invalidId    = uint32(0)
 )
 
 type CustomClaim struct {
@@ -16,11 +17,11 @@ type CustomClaim struct {
 }
 
 type JWTService struct {
-	SecretKey string
+	SecretKey []byte
 	TimeOut   *time.Duration
 }
 
-func NewJWTService(secretKey string, timeOut *time.Duration) *JWTService {
+func NewJWTService(secretKey []byte, timeOut *time.Duration) *JWTService {
 	return &JWTService{
 		SecretKey: secretKey,
 		TimeOut:   timeOut,
@@ -40,7 +41,7 @@ func (j *JWTService) Generate(id uint32) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	tokenString, err := token.SignedString([]byte(j.SecretKey))
+	tokenString, err := token.SignedString(j.SecretKey)
 
 	if err != nil {
 		return invalidToken, err
@@ -49,6 +50,23 @@ func (j *JWTService) Generate(id uint32) (string, error) {
 	return tokenString, nil
 }
 
-func (j *JWTService) ValidateToken(token string) (bool, error) {
-	return true, nil
+func (j *JWTService) ValidateToken(token string) (uint32, error) {
+	claim := &CustomClaim{}
+
+	tok, err := jwt.ParseWithClaims(token, claim, func(t *jwt.Token) (any, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
+		return j.SecretKey, nil
+	})
+
+	if err != nil {
+		return invalidId, err
+	}
+
+	if !tok.Valid {
+		return invalidId, ErrInvalidToken
+	}
+
+	return claim.Id, nil
 }

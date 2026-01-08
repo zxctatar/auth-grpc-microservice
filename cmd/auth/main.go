@@ -46,7 +46,7 @@ func main() {
 	}
 
 	postg := postgres.NewPostgres(log, db)
-	tokService := jwtservice.NewJWTService(cfg.GRPC.JWTSecretKey, &cfg.GRPC.JWTTimeOut)
+	tokService := jwtservice.NewJWTService([]byte(cfg.GRPC.JWTSecretKey), &cfg.GRPC.JWTTimeOut)
 	hashService := hasher.NewHasher()
 
 	regUC := registration.NewRegistrationUC(log, postg, hashService)
