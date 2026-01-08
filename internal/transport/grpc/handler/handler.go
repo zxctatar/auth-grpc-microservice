@@ -21,18 +21,20 @@ import (
 type AuthHandler struct {
 	authv1.UnimplementedAuthServiceServer
 
-	log     *slog.Logger
-	timeOut *time.Duration
-	regUC   usecaseinterf.RegistrationUseCase
-	loginUC usecaseinterf.LoginUseCase
+	log          *slog.Logger
+	timeOut      *time.Duration
+	regUC        usecaseinterf.RegistrationUseCase
+	loginUC      usecaseinterf.LoginUseCase
+	validTokenUc usecaseinterf.ValidateTokenUseCase
 }
 
-func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecaseinterf.RegistrationUseCase, loginUC usecaseinterf.LoginUseCase) *AuthHandler {
+func NewAuthHandler(log *slog.Logger, timeOut *time.Duration, regUC usecaseinterf.RegistrationUseCase, loginUC usecaseinterf.LoginUseCase, validTokenUc usecaseinterf.ValidateTokenUseCase) *AuthHandler {
 	return &AuthHandler{
-		log:     log,
-		timeOut: timeOut,
-		regUC:   regUC,
-		loginUC: loginUC,
+		log:          log,
+		timeOut:      timeOut,
+		regUC:        regUC,
+		loginUC:      loginUC,
+		validTokenUc: validTokenUc,
 	}
 }
 
@@ -126,7 +128,9 @@ func (ah *AuthHandler) Login(ctx context.Context, lg *authv1.LoginRequest) (*aut
 func (ah *AuthHandler) ValidateToken(ctx context.Context, vtr *authv1.ValidateTokenRequest) (*authv1.ValidateTokenResponse, error) {
 	const op = "handler.ValidateToken"
 
-	ah.log.Info("new validate token request", slog.String("op", op))
+	log := ah.log.With(slog.String("op", op))
+
+	log.Info("new validate token request")
 
 	panic("not implemented")
 }

@@ -9,6 +9,7 @@ import (
 	"auth/internal/transport/grpc/handler"
 	"auth/internal/usecase/implementations/login"
 	"auth/internal/usecase/implementations/registration"
+	"auth/internal/usecase/implementations/validtoken"
 	"auth/pkg/logger"
 	"database/sql"
 	"fmt"
@@ -51,8 +52,9 @@ func main() {
 
 	regUC := registration.NewRegistrationUC(log, postg, hashService)
 	loginUC := login.NewLoginUc(log, postg, tokService, hashService)
+	validTokenUc := validtoken.NewValidateTokenUC(log, tokService)
 
-	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC, loginUC)
+	authHandl := handler.NewAuthHandler(log, &cfg.GRPC.TimeOut, regUC, loginUC, validTokenUc)
 
 	server := grpcserv.NewServer(log, authHandl)
 

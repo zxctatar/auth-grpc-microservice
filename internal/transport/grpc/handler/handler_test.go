@@ -21,7 +21,7 @@ func TestNewAuthHandler_Succes(t *testing.T) {
 	timeOut := 5 * time.Second
 	var regUCMock *registrationUCMock = nil
 
-	handler := NewAuthHandler(log, &timeOut, regUCMock, nil)
+	handler := NewAuthHandler(log, &timeOut, regUCMock, nil, nil)
 
 	assert.Equal(t, handler.log, log)
 	assert.Equal(t, handler.timeOut.Seconds(), timeOut.Seconds())
@@ -37,7 +37,7 @@ func TestRegistration_Success(t *testing.T) {
 		},
 	}
 
-	handler := NewAuthHandler(log, &timeOut, regUCMock, nil)
+	handler := NewAuthHandler(log, &timeOut, regUCMock, nil, nil)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
@@ -68,7 +68,7 @@ func TestRegistration_UserAlreadyExists(t *testing.T) {
 		},
 	}
 
-	handler := NewAuthHandler(log, &timeOut, regUCMock, nil)
+	handler := NewAuthHandler(log, &timeOut, regUCMock, nil, nil)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
@@ -101,7 +101,7 @@ func TestRegistration_InvalidEmail(t *testing.T) {
 		},
 	}
 
-	handler := NewAuthHandler(log, &timeOut, regUCMock, nil)
+	handler := NewAuthHandler(log, &timeOut, regUCMock, nil, nil)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
@@ -139,7 +139,7 @@ func TestRegistration_Canceled(t *testing.T) {
 		},
 	}
 
-	handler := NewAuthHandler(log, &timeOut, regUCMock, nil)
+	handler := NewAuthHandler(log, &timeOut, regUCMock, nil, nil)
 
 	firstName := "Ivan"
 	middleName := "Ivanovich"
