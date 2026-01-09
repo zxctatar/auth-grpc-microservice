@@ -23,6 +23,10 @@ func TestLogin_Success(t *testing.T) {
 			assert.Equal(t, uint32(1), id)
 			return "token", nil
 		},
+		validTokenFn: func(token string) (uint32, error) {
+			t.Fatal("token should not be verified when requesting login.")
+			return 0, nil
+		},
 	}
 	hashMock := &hashServiceMock{
 		comFn: func(hashPass, password []byte) error {
@@ -62,6 +66,10 @@ func TestLogin_UserNotFound(t *testing.T) {
 		genFn: func(id uint32) (string, error) {
 			t.Fatal("token must not be generated if user not found")
 			return "", nil
+		},
+		validTokenFn: func(token string) (uint32, error) {
+			t.Fatal("token should not be verified when requesting login.")
+			return 0, nil
 		},
 	}
 	hashMock := &hashServiceMock{

@@ -1,4 +1,4 @@
-package registration
+package regerror
 
 import "errors"
 

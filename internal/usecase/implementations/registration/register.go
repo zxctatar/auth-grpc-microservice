@@ -3,6 +3,7 @@ package registration
 import (
 	"auth/internal/repository/hashservice"
 	"auth/internal/repository/storagerepo"
+	regerror "auth/internal/usecase/errors/registration"
 	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"errors"
@@ -42,7 +43,7 @@ func (ru *RegistrationUC) RegUser(ctx context.Context, ri *regmodels.RegInput) (
 	}
 	if userOut != nil {
 		log.Info("user already exists")
-		return invalidId, ErrUserAlreadyExists
+		return invalidId, regerror.ErrUserAlreadyExists
 	}
 
 	hashPass, err := ru.hasher.GenerateHashPassword([]byte(ri.Password))

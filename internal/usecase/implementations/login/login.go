@@ -4,6 +4,7 @@ import (
 	"auth/internal/repository/hashservice"
 	"auth/internal/repository/storagerepo"
 	"auth/internal/repository/tokenservice"
+	loginerror "auth/internal/usecase/errors/login"
 	logmodel "auth/internal/usecase/models/login"
 	"context"
 	"errors"
@@ -52,7 +53,7 @@ func (l *LoginUC) Login(ctx context.Context, li *logmodel.LoginInput) (string, e
 
 	if err != nil {
 		log.Info("wrong password", slog.String("error", err.Error()))
-		return invalidToken, ErrWrongPassword
+		return invalidToken, loginerror.ErrWrongPassword
 	}
 
 	token, err := l.tokService.Generate(authData.Id)

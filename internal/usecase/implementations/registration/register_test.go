@@ -3,6 +3,7 @@ package registration
 import (
 	userdomain "auth/internal/domain/user"
 	"auth/internal/repository/storagerepo"
+	regerror "auth/internal/usecase/errors/registration"
 	regmodels "auth/internal/usecase/models/registration"
 	"context"
 	"io"
@@ -109,7 +110,7 @@ func TestRegister_UserAlreadyExists(t *testing.T) {
 
 	_, err = regUc.RegUser(context.Background(), ri)
 
-	assert.ErrorIs(t, err, ErrUserAlreadyExists)
+	assert.ErrorIs(t, err, regerror.ErrUserAlreadyExists)
 
 	assert.True(t, repoMock.findByEmailCalled)
 }

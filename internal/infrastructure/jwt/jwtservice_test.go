@@ -54,7 +54,7 @@ func TestGenerateAndValidateToken_FailValidateToken(t *testing.T) {
 
 func TestGenerateAndValidateToken_TimeOut(t *testing.T) {
 	secretKey := []byte("key")
-	timeOut := 1 * time.Second
+	timeOut := 1 * time.Millisecond
 	userId := uint32(1)
 
 	jwtService := NewJWTService(secretKey, &timeOut)
@@ -63,7 +63,7 @@ func TestGenerateAndValidateToken_TimeOut(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(2 * time.Millisecond)
 
 	_, err = jwtService.ValidateToken(token)
 

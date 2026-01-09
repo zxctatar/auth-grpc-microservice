@@ -1,6 +1,8 @@
 package jwtservice
 
 import (
+	"auth/internal/repository/tokenservice"
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -61,6 +63,12 @@ func (j *JWTService) ValidateToken(token string) (uint32, error) {
 	})
 
 	if err != nil {
+		if errors.Is(err, jwt.ErrSignatureInvalid) {
+			return invalidId, tokenservice.ErrInvalidSignature
+		}
+		if errors.Is(err, jwt.ErrTokenMalformed) {
+			return invalidId, tokenservice.ErrTokenMalformed
+		}
 		return invalidId, err
 	}
 

@@ -3,9 +3,10 @@ package handler
 import (
 	userdomain "auth/internal/domain/user"
 	"auth/internal/repository/storagerepo"
+	"auth/internal/repository/tokenservice"
 	authv1 "auth/internal/transport/grpc/pb"
-	"auth/internal/usecase/implementations/login"
-	"auth/internal/usecase/implementations/registration"
+	loginerror "auth/internal/usecase/errors/login"
+	regerror "auth/internal/usecase/errors/registration"
 	usecaseinterf "auth/internal/usecase/interfaces"
 	logmodel "auth/internal/usecase/models/login"
 	regmodels "auth/internal/usecase/models/registration"
@@ -64,7 +65,7 @@ func (ah *AuthHandler) Registration(ctx context.Context, rr *authv1.Registration
 	id, err := ah.regUC.RegUser(ctx, regInput)
 
 	if err != nil {
-		if errors.Is(err, registration.ErrUserAlreadyExists) {
+		if errors.Is(err, regerror.ErrUserAlreadyExists) {
 			log.Info("registration failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.AlreadyExists, err.Error())
 		} else if errors.Is(err, userdomain.ErrInvalidEmail) {
@@ -111,14 +112,18 @@ func (ah *AuthHandler) Login(ctx context.Context, lg *authv1.LoginRequest) (*aut
 		if errors.Is(err, storagerepo.ErrUserNotFound) {
 			log.Info("login failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.NotFound, err.Error())
-		}
-		if errors.Is(err, login.ErrWrongPassword) {
+		} else if errors.Is(err, loginerror.ErrWrongPassword) {
 			log.Info("login failed", slog.String("error", err.Error()))
 			return nil, status.Error(codes.Unauthenticated, err.Error())
+		} else if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			log.Warn("long query execution", slog.String("error", err.Error()))
+			return nil, status.Error(codes.Canceled, "the request was canceled")
 		}
 		log.Warn("unsuccessful user login", slog.String("error", err.Error()))
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
+
+	log.Info("sending a response to the client")
 
 	return &authv1.LoginResponse{
 		Token: token,
@@ -132,5 +137,32 @@ func (ah *AuthHandler) ValidateToken(ctx context.Context, vtr *authv1.ValidateTo
 
 	log.Info("new validate token request")
 
-	panic("not implemented")
+	ctx, cancel := context.WithTimeout(ctx, *ah.timeOut)
+	defer cancel()
+
+	token := vtr.Token
+
+	id, err := ah.validTokenUc.ValidateToken(ctx, token)
+
+	if err != nil {
+		if errors.Is(err, tokenservice.ErrInvalidSignature) {
+			log.Info("invalid signature", slog.String("error", err.Error()))
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		} else if errors.Is(err, tokenservice.ErrTokenMalformed) {
+			log.Info("invalid token format", slog.String("error", err.Error()))
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		} else if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			log.Warn("long query execution", slog.String("error", err.Error()))
+			return nil, status.Error(codes.Canceled, "the request was canceled")
+		}
+		log.Warn("unable to validate token", slog.String("error", err.Error()))
+		return nil, status.Error(codes.Internal, "internal server error")
+	}
+
+	log.Info("sending a response to the client")
+
+	return &authv1.ValidateTokenResponse{
+		UserId: id,
+		Valid:  true,
+	}, nil
 }
