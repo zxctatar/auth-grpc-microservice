@@ -73,7 +73,7 @@ func (j *JWTService) ValidateToken(token string) (uint32, error) {
 	}
 
 	if !tok.Valid {
-		return invalidId, ErrInvalidToken
+		return invalidId, tokenservice.ErrInvalidToken
 	}
 
 	return claim.Id, nil
