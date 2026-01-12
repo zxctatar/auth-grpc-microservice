@@ -1,6 +1,6 @@
 # Auth gRPC Microservice
 
-Authentication and authorization microservice implemented in Go using gRPC and JWT. The service handles user registration, login, and access token validation.
+Authentication microservice implemented in Go using gRPC and JWT. The service handles user registration, login, and access token validation.
 
 ## Key Features
 
